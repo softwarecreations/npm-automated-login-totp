@@ -1,105 +1,145 @@
 #!/usr/bin/env node
 
 /**
- * Copyright 2018 Keikhosro Safavi
+ * Copyright 2022 @softwarecreations
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License in the LICENSE file in the
  * root directory of this source tree.
+ *
+ * Originally forked from https://github.com/ksafavi/npm-cli-adduser
  */
 
 'use strict';
 
+const totp = require('totp-generator');
+const colors = require('colors');
 const commander = require('commander');
-const {
-    spawn
-} = require('child_process');
-
+const { spawn } = require('child_process');
 const packageJson = require('./package.json');
 
-const isNullOrWhiteSpace = (str) => (str || '').trim() === '';
+const program = ( new commander.Command(packageJson.name)
+  .version(packageJson.version)
+  .usage('[--registry=url] [--scope=@orgname] [--always-auth] [--auth-type=legacy]')
+  .option('-r --registry <registry>', 'The base URL of the npm package registry')
+  .option('-s --scope <scope>', 'If specified, the user and login credentials given will be associated with the specified scope')
+  .option('-a --always-auth', 'If specified, save configuration indicating that all requests to the given registry should include authorization information')
+  .option('-t --auth-type <authType>', 'What authentication strategy to use with')
+  .option('-u --username <username>', 'Name of user to fetch starred packages for')
+  .option('-p --password <password>', 'Password of the user')
+  .option('-e --email <email>', 'Email of the user')
+  .option('-o --otp-secret ABC123', 'Secret for generating TOTP')
+  .option('-v --verbose', 'Show some debug info')
+  .option('-q --quiet', 'Silence NPM notices')
+  .parse(process.argv)
+);
 
-const program = new commander.Command(packageJson.name)
-    .version(packageJson.version)
-    .usage('[--registry=url] [--scope=@orgname] [--always-auth] [--auth-type=legacy]')
-    .option('-r --registry <registry>', 'The base URL of the npm package registry')
-    .option('-s --scope <scope>', 'If specified, the user and login credentials given will be associated with the specified scope')
-    .option('-a --always-auth', 'If specified, save configuration indicating that all requests to the given registry should include authorization information')
-    .option('-t --auth-type <authType>', 'What authentication strategy to use with')
-    .option('-u --username <username>', 'Name of user to fetch starred packages for')
-    .option('-p --password <password>', 'Password of the user')
-    .option('-e --email <email>', 'Email of the user')
-    .parse(process.argv);
+const npmArgsA = ['adduser'];
 
-const args = ['adduser'];
+let exitError = s => {
+  process.stderr.write(colors.red(`Error: ${s}\n`));
+  process.exit(1);
+};
+const getString = (label, paramName, envName, { required=0 }={ required:0 }) => {
+  envName = 'NPM_' + envName;
+  if (typeof program[  paramName]==='string' && program[  paramName].trim().length) return program[  paramName].trim();
+  if (typeof process.env[envName]==='string' && process.env[envName].trim().length) return process.env[envName].trim();
+  if (required) exitError(`${label} is required`);
+  return '';
+};
+const passNpmArg = (npmParam, paramName, envName) => {
+  envName = 'NPM_' + envName;
+  if (typeof program[  paramName]==='string' && program[  paramName].trim().length) npmArgsA.push( `--${npmParam}=` + program[  paramName].trim());
+  if (typeof process.env[envName]==='string' && process.env[envName].trim().length) npmArgsA.push( `--${npmParam}=` + process.env[envName].trim());
+};
 
-const registry = isNullOrWhiteSpace(program.registry) ? process.env.NPM_REGISTRY : program.registry;
-if (!isNullOrWhiteSpace(registry)) {
-    args.push('--registry=' + registry.trim());
-}
+passNpmArg('registry', 'registry', 'NPM_REGISTRY');
+passNpmArg('scope', 'scope', 'NPM_SCOPE');
+passNpmArg('auth-type', 'authType', 'NPM_AUTHTYPE');
 
-const scope = isNullOrWhiteSpace(program.scope) ? process.env.NPM_SCOPE : program.scope;
-if (!isNullOrWhiteSpace(scope)) {
-    args.push('--scope=' + scope.trim());
-}
+const username  = getString('username'         , 'username' ,     'USER');
+const password  = getString('password'         , 'password' ,     'PASS');
+const email     = getString('email'            , 'email'    ,     'EMAIL');
+const otpSecret = getString('TOTP Secret (2FA)', 'otpSecret', 'OTPSECRET');
 
-if (!isNullOrWhiteSpace(program.authType)) {
-    args.push('--auth-type=' + program.authType.trim());
-}
+const npmP = spawn('npm', npmArgsA, { stdio:'pipe', shell:true });
+let count=0, haveLoggedIn=0;
 
-const username = isNullOrWhiteSpace(program.username) ? process.env.NPM_USER : program.username;
-if (isNullOrWhiteSpace(username)) {
-    process.stderr.write('Username is required');
-    process.exit(1);
-}
+exitError = s => {
+  process.stderr.write(colors.red(`Error: ${s}\n`));
+  npmP.stdin.end();
+  process.exit(1);
+};
 
-const password = isNullOrWhiteSpace(program.password) ? process.env.NPM_PASS : program.password;
-if (isNullOrWhiteSpace(password)) {
-    process.stderr.write('Password is required');
-    process.exit(1);
-}
-
-const email = isNullOrWhiteSpace(program.email) ? process.env.NPM_EMAIL : program.email;
-if (isNullOrWhiteSpace(email)) {
-    process.stderr.write('Email is required');
-    process.exit(1);
-}
-
-const npm = spawn('npm', args, {
-    stdio: ['pipe', 'pipe', 'inherit'],
-    shell: true
+npmP.on('exit', code => {
+  if (!haveLoggedIn || program.verbose) console.log(`NPM HAS ENDED BY ITSELF`);
+  process.exit(code);
 });
 
-function checkStep(step, count) {
-    if (count > step) {
-        process.exit(1);
-    }
-}
+const assertIsStep = step => {
+  if (count++ <= step) return;
+  exitError(`count:${count} > step:${step}`);
+};
 
-let count = 0;
-npm.stdout.on('data', (data) => {
-    const str = data.toString();
-    process.stdout.write(str);
-    if (str.match(/username/i)) {
-        checkStep(0, count);
-        process.stdout.write(`${username}\n`);
-        npm.stdin.write(username + '\n');
-    } else if (str.match(/password/i)) {
-        checkStep(1, count);
-        process.stdout.write('\n');
-        npm.stdin.write(password + '\n');
-    } else if (str.match(/email/i)) {
-        checkStep(2, count);
-        process.stdout.write(`${email}\n`);
-        npm.stdin.write(email + '\n');
-        npm.stdin.end();
-    } else if (str.match(/.*err.*/i)) {
-        npm.stdin.end();
+const npmWrite = s => {
+  if (program.verbose) console.log(`TO NPM: ${s}`);
+  npmP.stdin.write(s + '\n');
+};
+
+const stdErrA = [];
+let tmrShowStdErr = '';
+npmP.stderr.on('data', data => {
+  const line = data.toString();
+  stdErrA.push(line);
+  if (!line.match(/^npm ?(notice)?$/)) {
+    const buf = stdErrA.join('\n').replace(/npm *\n/,'npm').replace(/npm *notice\n/,'npm notice');
+    if (buf.match(/check your email/i)) {
+      exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
+    } else if (buf.match(/^npm notice/)) {
+      if ((buf.match(/log[ -]?in on /i) || buf.match(/one-time password|OTP|authenticator app/i)) && !program.verbose) {
+        // don't log
+      } else {
+        console.log(colors.cyan(buf));
+      }
+    } else {
+      console.log(colors.red(`NPM STDERR: ${buf}`));
     }
-    count++;
+    stdErrA.length = 0;
+  }
 });
 
-npm.on('exit', (code) => {
-    process.exit(code);
+
+npmP.stdout.on('data', data => {
+  const npmS = data.toString();
+  if (program.verbose) console.log('VERBOSE PASSTHROUGH: ' + npmS);
+  if (npmS.match(/check your email/i)) {
+    exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
+  } else if (npmS.match(/username/i)) {
+    assertIsStep(0);
+    npmWrite(username);
+  } else if (npmS.match(/one-time password|OTP|authenticator app/i)) {
+    assertIsStep(3);
+    const otp = totp(otpSecret);
+    npmWrite(otp);
+    npmP.stdin.end(); // this is the last thing that we enter, so we end the stream
+  } else if (npmS.match(/password/i)) {
+    assertIsStep(1);
+    npmWrite(password);
+  } else if (npmS.match(/email/i)) {
+    assertIsStep(2);
+    npmWrite(email);
+  } else if (npmS.match(/logged in as/i)) {
+    haveLoggedIn = 1;
+    if (!program.quiet) console.log(colors.green(npmS.trim()));
+  } else if (npmS.match(/.*err.*/i)) {
+    console.log(`Unknown error`)
+    npmP.stdin.end();
+  } else if (!program.verbose) {
+    if (npmS.match(/npm notice/i)) {
+      if (!program.quiet) console.log('NOTICE (NOT QUIET): ' + npmS);
+    } else {
+      if (!showingOutput) console.log(`Unknown NPM output: ${npmS}`);
+    }
+  }
 });

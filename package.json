@@ -1,6 +1,6 @@
 {
-  "name": "npm-cli-adduser",
-  "version": "1.1.4",
+  "name": "npm-automated-login-totp",
+  "version": "1.0.0",
   "description": "A script to perform `npm adduser` without having to interact with the shell",
   "bin": {
     "npm-cli-adduser": "./index.js"
@@ -19,13 +19,15 @@
     "adduser",
     "cli"
   ],
-  "author": "Keikhosro Safavi",
-  "license": "Apache-2.0",
+  "author": "@softwarecreations",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ksafavi/npm-cli-adduser/issues"
   },
   "homepage": "https://github.com/ksafavi/npm-cli-adduser#readme",
   "dependencies": {
-    "commander": "^2.19.0"
+    "colors": "^1.4.0",
+    "commander": "^2.19.0",
+    "totp-generator": "^0.0.13"
   }
 }
