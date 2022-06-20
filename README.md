@@ -57,5 +57,12 @@ All are welcome.
 ##### License
 MIT
 
+##### Dependencies
+Package name   | Purpose
+---            | ---
+colors         | Colors in terminal
+commander      | Get command-line arguments
+totp-generator | Generate TOTP's for login
+
 ##### Credits
 I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 89% of it. I basically just kept the command-line switches but DRY'd up the code around them.
