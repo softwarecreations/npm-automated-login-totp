@@ -54,5 +54,8 @@ npm-cli-adduser --registry https://example.com --username testUser --password te
 ##### Issues, PR's etc
 All are welcome.
 
+##### License
+MIT
+
 ##### Credits
 I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 89% of it. I basically just kept the command-line switches but DRY'd up the code around them.
