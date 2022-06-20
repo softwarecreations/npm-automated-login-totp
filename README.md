@@ -39,6 +39,7 @@ These command line arguments are also supported:
 - `-u --username`: NPM Username
 - `-p --password`: NPM Password
 - `-o --otp-secret`: TOTP secret used to generate OTP's for 2FA login
+- `-g --generate`: Generate TOTP (only)
 - `-e --email`: NPM Email
 
 Note that the command line arguments override the environment variables.

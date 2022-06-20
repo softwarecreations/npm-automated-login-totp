@@ -30,6 +30,7 @@ const program = ( new commander.Command(packageJson.name)
   .option('-p --password <password>', 'Password of the user')
   .option('-e --email <email>', 'Email of the user')
   .option('-o --otp-secret ABC123', 'Secret for generating TOTP')
+  .option('-g --generate', 'Generate an OTP')
   .option('-v --verbose', 'Show some debug info')
   .option('-q --quiet', 'Silence NPM notices')
   .parse(process.argv)
@@ -65,6 +66,12 @@ const username  = getString('username'         , 'username' ,     'USER');
 const password  = getString('password'         , 'password' ,     'PASS');
 const email     = getString('email'            , 'email'    ,     'EMAIL');
 const otpSecret = getString('TOTP Secret (2FA)', 'otpSecret', 'OTPSECRET');
+
+if (program.generate) {
+  const otp = totp(otpSecret);
+  console.log(colors.brightCyan(otp));
+  process.exit();
+}
 
 const npmP = spawn('npm', npmArgsA, { stdio:'pipe', shell:true });
 let count=0, haveLoggedIn=0;
