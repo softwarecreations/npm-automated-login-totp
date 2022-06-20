@@ -54,10 +54,13 @@ const passNpmArg = (npmParam, paramName, envName) => {
   if (typeof process.env[envName]==='string' && process.env[envName].trim().length) npmArgsA.push( `--${npmParam}=` + process.env[envName].trim());
 };
 
-passNpmArg('registry', 'registry', 'NPM_REGISTRY');
-passNpmArg('scope', 'scope', 'NPM_SCOPE');
-passNpmArg('auth-type', 'authType', 'NPM_AUTHTYPE');
+// pass arguments through to npm (if provided)
+//         NPM param  , param name, environment variable suffix
+passNpmArg('auth-type', 'authType', 'AUTHTYPE');
+passNpmArg('registry' , 'registry', 'REGISTRY');
+passNpmArg('scope'    , 'scope'   , 'SCOPE'   );
 
+// get strings:             label                param name,  environment variable suffix
 const username  = getString('username'         , 'username' ,     'USER');
 const password  = getString('password'         , 'password' ,     'PASS');
 const email     = getString('email'            , 'email'    ,     'EMAIL');
