@@ -1,9 +1,9 @@
 {
   "name": "npm-automated-login-totp",
   "version": "1.0.0",
-  "description": "A script to perform `npm adduser` without having to interact with the shell",
+  "description": "A script to login to NPM non-interactively.",
   "bin": {
-    "npm-cli-adduser": "./index.js"
+    "npm-automated-login-totp": "./index.js"
   },
   "main": "index.js",
   "scripts": {
@@ -11,20 +11,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ksafavi/npm-cli-adduser.git"
+    "url": "git+https://github.com/softwarecreations/npm-automated-login-totp.git"
   },
   "keywords": [
     "npm",
     "login",
     "adduser",
-    "cli"
+    "cli",
+    "automation",
+    "2fa",
+    "authentication",
+    "noninteractive"
   ],
   "author": "@softwarecreations",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ksafavi/npm-cli-adduser/issues"
+    "url": "https://github.com/softwarecreations/npm-automated-login-totp/issues"
   },
-  "homepage": "https://github.com/ksafavi/npm-cli-adduser#readme",
+  "homepage": "https://github.com/softwarecreations/npm-automated-login-totp",
   "dependencies": {
     "colors": "^1.4.0",
     "commander": "^2.19.0",
