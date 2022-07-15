@@ -36,7 +36,7 @@ const program = ( new commander.Command(packageJson.name)
   .parse(process.argv)
 );
 
-const npmArgsA = ['adduser'];
+const npmArgsA = ['login'];
 
 let exitError = s => {
   process.stderr.write(colors.red(`Error: ${s}\n`));
