@@ -2,7 +2,7 @@
 
 A script to perform `npm login` (previously `npm adduser`) without having to interact with the shell.
 
-This allows fully automated (non-interactive) NPM user login that you can run inside a bash script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
+This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
 ## Security warning
 By using this script, obviously you're losing 2FA security on your NPM account.
@@ -105,3 +105,4 @@ I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) wh
 * cc-oci-runtime
 * devops
 * Continuous Integration
+* Shell scripts: Bash / ZSH / Fish / ksh KornShell / Tcsh / Xonsh / Nushell / Ash / Dash / eshell
