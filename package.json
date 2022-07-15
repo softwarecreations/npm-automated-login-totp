@@ -1,12 +1,13 @@
 {
   "name": "npm-automated-login-totp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A script to login to NPM non-interactively.",
   "bin": {
     "npm-automated-login-totp": "./index.js"
   },
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -112,6 +112,8 @@ npmP.stderr.on('data', data => {
       } else {
         console.log(colors.cyan(buf));
       }
+    } else if (buf.match(/adduser.+split.+login.+register.+alias.+command/)) { // silence this NPM warning that we have already taken care of: npm WARN adduser `adduser` will be split into `login` and `register in a future version. `adduser` will become an alias of `register`. `login` (currently an alias) will become its own command.
+      // don't log, we have taken care of this already.
     } else {
       console.log(colors.red(`NPM STDERR: ${buf}`));
     }
