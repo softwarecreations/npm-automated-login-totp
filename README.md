@@ -1,6 +1,6 @@
 # npm-automated-login-totp
 
-A script to perform `npm adduser` without having to interact with the shell.
+A script to perform `npm login` without having to interact with the shell.
 
 This allows fully automated (non-interactive) NPM user login that you can run inside a bash script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
@@ -21,7 +21,7 @@ By using this script, obviously you're losing 2FA security on your NPM account.
 
 ##### CLI
 
-`npm-cli-adduser` supports the following environment variables:
+`npm-automated-login-totp` supports the following environment variables:
 
 - `NPM_REGISTRY`: (optional) Private NPM registry to log in to (Default: https://registry.npmjs.org)
 - `NPM_SCOPE`: NPM Scope
@@ -39,7 +39,7 @@ These command line arguments are also supported:
 - `-u --username`: NPM Username
 - `-p --password`: NPM Password
 - `-o --otp-secret`: TOTP secret used to generate OTP's for 2FA login
-- `-g --generate`: Generate TOTP (only)
+- `-g --generate-otp`: Generate TOTP (only)
 - `-e --email`: NPM Email
 
 Note that the command line arguments override the environment variables.
@@ -49,7 +49,7 @@ Note that the command line arguments override the environment variables.
 Logging in to a private NPM registry:
 
 ```
-npm-cli-adduser --registry https://example.com --username testUser --password testPass --otp-secret ABC123 --email test@example.com
+npm-automated-login-totp --registry https://example.com --username testUser --password testPass --otp-secret ABC123 --email test@example.com
 ```
 
 ##### Issues, PR's etc
@@ -66,4 +66,42 @@ commander      | Get command-line arguments
 totp-generator | Generate TOTP's for login
 
 ##### Credits
-I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 89% of it. I basically just kept the command-line switches but DRY'd up the code around them.
+I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 93% of it. I basically just kept the command-line switches but DRY'd up the code around them.
+
+##### Keywords so that people can find this project
+* LXC
+* CRI-O
+* rkt
+* Podman
+* runc
+* containerd
+* systemd-nspawn
+* Docker
+* udocker
+* porto
+* OpenVZ
+* Bocker
+* Rocket
+* Vagga
+* libvirt / libvirtd
+* KVM
+* Xen
+* VMWare
+* Hyper-v
+* vSphere
+* AWS / EC2 / Amazon Elastic containers / Azure
+* Serverless containers
+* Proxmox
+* Qemu
+* runv
+* Firecracker
+* sysbox
+* Youki
+* Plash
+* railcar
+* Kata containers
+* podman
+* Let Me Contain That For You
+* cc-oci-runtime
+* devops
+* Continuous Integration
