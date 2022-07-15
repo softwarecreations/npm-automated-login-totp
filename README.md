@@ -1,6 +1,6 @@
 # npm-automated-login-totp
 
-A script to perform `npm login` without having to interact with the shell.
+A script to perform `npm login` (previously `npm adduser`) without having to interact with the shell.
 
 This allows fully automated (non-interactive) NPM user login that you can run inside a bash script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
