@@ -10,6 +10,9 @@ I am new to sharing or open sourcing my software.
 If you like this project please star the github repo. That lets me know that it's appreciated and that I should continue maintaining it as NPM evolves.
 https://github.com/softwarecreations/npm-automated-login-totp
 
+## YubiKey support
+I will add it when I have time. If you want this, star the repo, make an issue and upvote it.
+
 ## Security warning
 By using this script, obviously you're losing 2FA security on your NPM account.
 
