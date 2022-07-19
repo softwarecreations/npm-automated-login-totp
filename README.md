@@ -4,6 +4,12 @@ A script to perform `npm login` (previously `npm adduser`) without having to int
 
 This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
+## How to say thanks
+Wow, Suddenly I see there are 197 downloads this week!
+I am new to sharing or open sourcing my software.
+If you like this project please star the github repo. That lets me know that it's appreciated and that I should continue maintaining it as NPM evolves.
+https://github.com/softwarecreations/npm-automated-login-totp
+
 ## Security warning
 By using this script, obviously you're losing 2FA security on your NPM account.
 
