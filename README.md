@@ -19,7 +19,12 @@ By using this script, obviously you're losing 2FA security on your NPM account.
 
 ### Usage
 
+1. First enable 2FA on your NPM account, you can do this with AndOTP, Authy or whatever TOTP app that you like.
+2. Your authenticator app should allow you to view your OTP secret; you will need it to continue.
+
 ##### CLI
+
+You can either provide the required credentials inline, or via environment variables.
 
 `npm-automated-login-totp` supports the following environment variables:
 
@@ -46,8 +51,13 @@ Note that the command line arguments override the environment variables.
 
 ##### Example
 
-Logging in to a private NPM registry:
+###### If you've provided required environment variables
+`npm-automated-login-totp`
 
+###### If you're providing the bare minimum inline
+`npm-automated-login-totp --username testUser --password testPass --otp-secret ABC123 --email test@example.com`
+
+###### Logging in to a private NPM registry:
 ```
 npm-automated-login-totp --registry https://example.com --username testUser --password testPass --otp-secret ABC123 --email test@example.com
 ```
