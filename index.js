@@ -100,14 +100,14 @@ const npmWrite = s => {
 const stdErrA = [];
 let tmrShowStdErr = '';
 npmP.stderr.on('data', data => {
-  const line = data.toString();
+  const line = data.toString().trim();
   stdErrA.push(line);
-  if (!line.match(/^npm ?(notice)?$/)) {
-    const buf = stdErrA.join('\n').replace(/npm *\n/,'npm').replace(/npm *notice\n/,'npm notice');
+  if (!line.match(/^npm[ -]?(notice)?$/i)) {
+    const buf = stdErrA.join('\n').replace(/npm *\n/i,'npm').replace(/npm *notice\n/i,'npm notice').trim();
     if (buf.match(/check your email/i)) {
       exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
     } else if (buf.match(/^npm notice/)) {
-      if ((buf.match(/log[ -]?in on /i) || buf.match(/one-time password|OTP|authenticator app/i)) && !program.verbose) {
+      if (!program.verbose && (buf.match(/log[ -]?in on /i) || buf.match(/one-time password|OTP|authenticator app/i))) {
         // don't log
       } else {
         console.log(colors.cyan(buf));
