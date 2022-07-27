@@ -53,12 +53,20 @@ These command line arguments are also supported:
 - `-u --username`: NPM Username
 - `-p --password`: NPM Password
 - `-o --otp-secret`: TOTP secret used to generate OTP's for 2FA login
-- `-g --generate-otp`: Generate TOTP (only)
 - `-e --email`: NPM Email
 
 Note that the command line arguments override the environment variables.
 
+Useful action commands
+
+- `-g --generate-otp`: Generate TOTP (only)
+- `-m --make-secret`: Make a new secret (if you use this, you don't need a separate app)
+
+
 ##### Example
+
+###### If you don't want to use an authenticator app (eg: on your phone)
+`npm-automated-login-totp --make-secret`
 
 ###### If you've provided required environment variables
 `npm-automated-login-totp`
@@ -82,10 +90,15 @@ Package name   | Purpose
 ---            | ---
 colors         | Colors in terminal
 commander      | Get command-line arguments
-totp-generator | Generate TOTP's for login
+otplib         | Generate TOTPs and secrets
+~~totp-generator | Generate TOTP's for login~~
+
+##### Changelog
+1.1.8 Refactor & improve NPM Error parser
+1.2.0 Switch from `totp-generator` to `otplib` so that I could add the `--make-secret` option. Tweaked stderr parser to respect `--quiet`.
 
 ##### Credits
-I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 93% of it. I basically just kept the command-line switches but DRY'd up the code around them.
+I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 96% of it. I basically just kept the command-line switches but DRY'd up the code around them.
 
 ##### Keywords so that people can find this project
 * LXC

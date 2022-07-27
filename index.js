@@ -13,7 +13,7 @@
 
 'use strict';
 
-const totp = require('totp-generator');
+const totp = require('otplib').authenticator;
 const colors = require('colors');
 const commander = require('commander');
 const { spawn } = require('child_process');
@@ -31,6 +31,7 @@ const program = ( new commander.Command(packageJson.name)
   .option('-e --email <email>', 'Email of the user')
   .option('-o --otp-secret ABC123', 'Secret for generating TOTP')
   .option('-g --generate-otp', 'Generate an OTP')
+  .option('-m --make-secret', 'Generate an OTP Secret')
   .option('-v --verbose', 'Show some debug info')
   .option('-E --error', 'Show stderr')
   .option('-q --quiet', 'Silence NPM notices')
@@ -69,8 +70,14 @@ const email     = getString('email'            , 'email'    ,     'EMAIL');
 const otpSecret = getString('TOTP Secret (2FA)', 'otpSecret', 'OTPSECRET');
 
 if (program.generateOtp) {
-  const otp = totp(otpSecret);
+  const otp = totp.generate(otpSecret);
   console.log(colors.brightCyan(otp));
+  process.exit();
+}
+
+if (program.makeSecret) {
+  const secret = totp.generateSecret();
+  console.log(colors.brightCyan(secret));
   process.exit();
 }
 
@@ -118,9 +125,8 @@ npmP.stderr.on('data', data => {
   const isAuthMsg    = bit(line.match(/one[ -]?time[ -]password|OTP|auth(enticator)?[ -]app/i));
   const isAddUserMsg = bit(line.match(/adduser.+split.+login.+register.+alias.+command/i)); // silence this NPM warning that we have already taken care of: npm WARN adduser `adduser` will be split into `login` and `register in a future version. `adduser` will become an alias of `register`. `login` (currently an alias) will become its own command.
   const isUnknownMsg = bit(!isLoginMsg && !isAuthMsg && !isAddUserMsg);
-  const isNpmNotice  = bit(!isUnknownMsg && line.match(/^npm[ -]?notice\s*$/i));
-  if (program.verbose || program.error || isUnknownMsg) {
-    console.log(`isLoginMsg:${isLoginMsg}, isAuthMsg:${isAuthMsg}, isAddUserMsg:${isAddUserMsg}, isUnknownMsg:${isUnknownMsg}, isNpmNotice:${isNpmNotice}`);
+  if (!program.quiet && (program.verbose || program.error || isUnknownMsg)) {
+    console.log(`isLoginMsg:${isLoginMsg}, isAuthMsg:${isAuthMsg}, isAddUserMsg:${isAddUserMsg}, isUnknownMsg:${isUnknownMsg}`);
     console.log(colors.red(`NPM UNKNOWN STDERR: ${line}`));
   }
 });
@@ -136,7 +142,7 @@ npmP.stdout.on('data', data => {
     npmWrite(username);
   } else if (npmS.match(/one-time password|OTP|authenticator app/i)) {
     assertIsStep(3);
-    const otp = totp(otpSecret);
+    const otp = totp.generate(otpSecret);
     npmWrite(otp);
     npmP.stdin.end(); // this is the last thing that we enter, so we end the stream
   } else if (npmS.match(/password/i)) {
