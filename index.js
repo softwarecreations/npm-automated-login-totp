@@ -32,6 +32,7 @@ const program = ( new commander.Command(packageJson.name)
   .option('-o --otp-secret ABC123', 'Secret for generating TOTP')
   .option('-g --generate-otp', 'Generate an OTP')
   .option('-v --verbose', 'Show some debug info')
+  .option('-E --error', 'Show stderr')
   .option('-q --quiet', 'Silence NPM notices')
   .parse(process.argv)
 );
@@ -76,7 +77,7 @@ if (program.generateOtp) {
 const npmP = spawn('npm', npmArgsA, { stdio:'pipe', shell:true });
 let count=0, haveLoggedIn=0;
 
-exitError = s => {
+exitError = s => { // re-define exitError to also end the stdin stream
   process.stderr.write(colors.red(`Error: ${s}\n`));
   npmP.stdin.end();
   process.exit(1);
@@ -97,27 +98,30 @@ const npmWrite = s => {
   npmP.stdin.write(s + '\n');
 };
 
-const stdErrA = [];
-let tmrShowStdErr = '';
+const bit = x => x ? 1 : 0;
+
+/* Comments about NPM error output
+  -
+  NPM has made multiple arbitrary tweaks to it's error output, where they added/removed variations of /npm[ -]?notice\n/i combined or not combined with known messages that we check for.
+  So we do not assume that /npm[ -]?notice\n/i will or won't be combined with messages that we check for.
+  The goal is to silence all useless junk, but show anything that's possibly important or worth seeing.
+  -
+  At one point I was going to add the lines to an array and reset a timer every time the lines come in, then process the data after the timer expires; but for now that seems to be unnecessary.
+  -
+  So for now, the current approach seems to be reliable, simplest and best.
+*/
 npmP.stderr.on('data', data => {
-  const line = data.toString().trim();
-  stdErrA.push(line);
-  if (!line.match(/^npm[ -]?(notice)?$/i)) {
-    const buf = stdErrA.join('\n').replace(/npm *\n/i,'npm').replace(/npm *notice\n/i,'npm notice').trim();
-    if (buf.match(/check your email/i)) {
-      exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
-    } else if (buf.match(/^npm notice/)) {
-      if (!program.verbose && (buf.match(/log[ -]?in on /i) || buf.match(/one-time password|OTP|authenticator app/i))) {
-        // don't log
-      } else {
-        console.log(colors.cyan(buf));
-      }
-    } else if (buf.match(/adduser.+split.+login.+register.+alias.+command/)) { // silence this NPM warning that we have already taken care of: npm WARN adduser `adduser` will be split into `login` and `register in a future version. `adduser` will become an alias of `register`. `login` (currently an alias) will become its own command.
-      // don't log, we have taken care of this already.
-    } else {
-      console.log(colors.red(`NPM STDERR: ${buf}`));
-    }
-    stdErrA.length = 0;
+  const line = data.toString().replace(/npm *\n/i,'npm').replace(/npm[ -]?notice\n/i,'npm notice').trim();
+  if (line.match(/^npm( notice)?$/i)) return;
+  if (line.match(/check your email/i)) exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
+  const isLoginMsg   = bit(line.match(/log[ -]?in on /i));
+  const isAuthMsg    = bit(line.match(/one[ -]?time[ -]password|OTP|auth(enticator)?[ -]app/i));
+  const isAddUserMsg = bit(line.match(/adduser.+split.+login.+register.+alias.+command/i)); // silence this NPM warning that we have already taken care of: npm WARN adduser `adduser` will be split into `login` and `register in a future version. `adduser` will become an alias of `register`. `login` (currently an alias) will become its own command.
+  const isUnknownMsg = bit(!isLoginMsg && !isAuthMsg && !isAddUserMsg);
+  const isNpmNotice  = bit(!isUnknownMsg && line.match(/^npm[ -]?notice\s*$/i));
+  if (program.verbose || program.error || isUnknownMsg) {
+    console.log(`isLoginMsg:${isLoginMsg}, isAuthMsg:${isAuthMsg}, isAddUserMsg:${isAddUserMsg}, isUnknownMsg:${isUnknownMsg}, isNpmNotice:${isNpmNotice}`);
+    console.log(colors.red(`NPM UNKNOWN STDERR: ${line}`));
   }
 });
 
