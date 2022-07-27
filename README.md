@@ -5,7 +5,7 @@ A script to perform `npm login` (previously `npm adduser`) without having to int
 This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
 ## How to say thanks
-Wow, Suddenly I see there are 197 downloads this week!
+Wow, Suddenly I see there are 50~200 downloads per week!
 I am new to sharing or open sourcing my software.
 If you like this project please star the github repo. That lets me know that it's appreciated and that I should continue maintaining it as NPM evolves.
 https://github.com/softwarecreations/npm-automated-login-totp
@@ -26,12 +26,12 @@ By using this script, obviously you're losing 2FA security on your NPM account.
 
     npm install -g npm-automated-login-totp
 
-### Usage
+### Setup
 
-1. First enable 2FA on your NPM account, you can do this with AndOTP, Authy or whatever TOTP app that you like.
+1. First enable 2FA on your NPM account, you can do this with AndOTP, Authy (or whatever TOTP app that you like) or simply run `--make-secret`
 2. Your authenticator app should allow you to view your OTP secret; you will need it to continue.
 
-##### CLI
+### `npm-automated-login-totp --help`
 
 You can either provide the required credentials inline, or via environment variables.
 
@@ -63,44 +63,44 @@ Useful action commands
 - `-m --make-secret`: Make a new secret (if you use this, you don't need a separate app)
 
 
-##### Example
+### CLI Example
 
-###### If you don't want to use an authenticator app (eg: on your phone)
+#### If you don't want to use an authenticator app (eg: on your phone)
 `npm-automated-login-totp --make-secret`
 
-###### If you've provided required environment variables
+#### If you've provided required environment variables
 `npm-automated-login-totp`
 
-###### If you're providing the bare minimum inline
+#### If you're providing the bare minimum inline
 `npm-automated-login-totp --username testUser --password testPass --otp-secret ABC123 --email test@example.com`
 
-###### Logging in to a private NPM registry:
+#### Logging in to a private NPM registry:
 ```
 npm-automated-login-totp --registry https://example.com --username testUser --password testPass --otp-secret ABC123 --email test@example.com
 ```
 
-##### Issues, PR's etc
+### Issues, PR's etc
 All are welcome.
 
-##### License
+### License
 MIT
 
-##### Dependencies
+### Dependencies
 Package name   | Purpose
 ---            | ---
 colors         | Colors in terminal
 commander      | Get command-line arguments
 otplib         | Generate TOTPs and secrets
-~~totp-generator | Generate TOTP's for login~~
+~~totp-generator~~ | ~~Generate TOTP's for login~~
 
-##### Changelog
-1.1.8 Refactor & improve NPM Error parser
-1.2.0 Switch from `totp-generator` to `otplib` so that I could add the `--make-secret` option. Tweaked stderr parser to respect `--quiet`.
+### Changelog
+- 1.1.8 Refactor & improve NPM Error parser
+- 1.2.0 Switch from `totp-generator` to `otplib` so that I could add the `--make-secret` option. Tweaked stderr parser to respect `--quiet`.
 
-##### Credits
+### Credits
 I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 96% of it. I basically just kept the command-line switches but DRY'd up the code around them.
 
-##### Keywords so that people can find this project
+#### Keywords so that people can find this project
 * LXC
 * CRI-O
 * rkt
