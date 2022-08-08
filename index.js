@@ -119,7 +119,7 @@ const bit = x => x ? 1 : 0;
 */
 npmP.stderr.on('data', data => {
   const line = data.toString().replace(/npm *\n/i,'npm').replace(/npm[ -]?notice\n/i,'npm notice').trim();
-  if (line.match(/^npm( notice)?$/i)) return;
+  if (line.match(/^(npm)? ?(notice)?$/i)) return;
   if (line.match(/check your email/i)) exitError(`You have not configured TOTP on your NPM account, enable 2FA or whatever.`);
   const isLoginMsg   = bit(line.match(/log[ -]?in on /i));
   const isAuthMsg    = bit(line.match(/one[ -]?time[ -]password|OTP|auth(enticator)?[ -]app/i));
