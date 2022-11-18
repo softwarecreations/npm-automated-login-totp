@@ -2,18 +2,31 @@
 
 Login to NPM, fully automated, headless, scripted, non-interactive.
 
+## Newbie questions
+
 ### What is 2FA?
 If you don't know, read "2FA for dummies" at the bottom of this page.
 
-### Installation
+### Noobs - What is TOTP?
+Time based One-Time-Password. If you've used Google Authenticator, Authy, AndOTP, etc then you've used it.
+
+It starts by creating a secret, then your OTP app generally makes a new OTP, based on a the current time in a 15 second interval.
+
+### Noobs - How npm-automated-login-totp works
+NPM requires 2FA for login, so npm-automated-login-totp generates OTP's so that it can login to NPM.
+
+## Installation - 2 minute setup
 `npm install -g npm-automated-login-totp`
 
-### 2 minute setup
-Example username is `bob`
+Example username is: `bob`
 
-1. First enable 2FA on your NPM account, you can do this with AndOTP, Authy (or whatever TOTP app that you like) or simply run `--make-secret`
+1. Create or get your TOTP-Secret for NPM
+Run `npm-automated-login-totp --make-secret` ... you're done.
+You can also make a TOTP-Secret with a TOTP app on your phone, then retrieve the secret, but that's pointless.
+
+2. Enable 2FA on your NPM account
+Open your NPMjs.com profile page
 https://www.npmjs.com/settings/bob/profile > Two-Factor Authentication
-2. Your authenticator app should allow you to view your OTP secret; you will need it to continue.
 
 3. Add this to your `~/.profile` or `~/.bashrc`
 #Fill in the stuff after the equals sign
