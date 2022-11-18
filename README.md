@@ -29,11 +29,13 @@ Open your NPMjs.com profile page
 https://www.npmjs.com/settings/bob/profile > Two-Factor Authentication
 
 3. Add this to your `~/.profile` or `~/.bashrc`
-#Fill in the stuff after the equals sign
+Put your details inside the quotes
+```
 export NPM_USER='bob'
 export NPM_PASS='Secret-SeCreT-SECRET'
 export NPM_EMAIL='bob@email.com'
 export NPM_OTPSECRET='ABC123'
+```
 
 4. Close and reopen terminal
 
