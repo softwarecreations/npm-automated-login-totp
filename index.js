@@ -38,7 +38,21 @@ const program = ( new commander.Command(packageJson.name)
   .parse(process.argv)
 );
 
-const npmArgsA = ['login'];
+if (program.generateOtp) {
+  const otp = totp.generate(otpSecret);
+  console.log(colors.brightCyan(otp));
+  process.exit();
+}
+
+if (program.makeSecret) {
+  const secret = totp.generateSecret();
+  console.log(colors.brightCyan(secret));
+  process.exit();
+}
+
+// do login
+
+const npmArgsA = ['login', '--auth-type=legacy'];
 
 let exitError = s => {
   process.stderr.write(colors.red(`Error: ${s}\n`));
@@ -69,17 +83,7 @@ const password  = getString('password'         , 'password' ,     'PASS');
 const email     = getString('email'            , 'email'    ,     'EMAIL');
 const otpSecret = getString('TOTP Secret (2FA)', 'otpSecret', 'OTPSECRET');
 
-if (program.generateOtp) {
-  const otp = totp.generate(otpSecret);
-  console.log(colors.brightCyan(otp));
-  process.exit();
-}
-
-if (program.makeSecret) {
-  const secret = totp.generateSecret();
-  console.log(colors.brightCyan(secret));
-  process.exit();
-}
+npmArgsA.push(`--otp=${totp.generate(otpSecret)}`);
 
 const npmP = spawn('npm', npmArgsA, { stdio:'pipe', shell:true });
 let count=0, haveLoggedIn=0;
@@ -91,7 +95,7 @@ exitError = s => { // re-define exitError to also end the stdin stream
 };
 
 npmP.on('exit', code => {
-  if (!haveLoggedIn || program.verbose) console.log(`NPM HAS ENDED BY ITSELF`);
+  if (!haveLoggedIn || program.verbose) console.log(`NPM HAS ENDED BY ITSELF, with code: ${code}`);
   process.exit(code);
 });
 
@@ -107,7 +111,17 @@ const npmWrite = s => {
 
 const bit = x => x ? 1 : 0;
 
-/* Comments about NPM error output
+const doAuth = () => { // as of 2022-11-18 this is unnecessary, because npm has added the --otp option, it's faster and more reliable to provide it directly than via stdin.
+  assertIsStep(3);
+  const otp = totp.generate(otpSecret);
+  npmWrite(otp);
+  npmP.stdin.end(); // this is the last thing that we enter, so we end the stream
+};
+
+/*
+  If the code seems a bit akward or like it could be simplified a little bit, it's because NPM changes their interface without warning, so I try to make the code flexible, so that it can keep working regardless of minor changes to NPM.
+
+  Comments about NPM error output
   -
   NPM has made multiple arbitrary tweaks to it's error output, where they added/removed variations of /npm[ -]?notice\n/i combined or not combined with known messages that we check for.
   So we do not assume that /npm[ -]?notice\n/i will or won't be combined with messages that we check for.
@@ -129,6 +143,7 @@ npmP.stderr.on('data', data => {
     console.log(`isLoginMsg:${isLoginMsg}, isAuthMsg:${isAuthMsg}, isAddUserMsg:${isAddUserMsg}, isUnknownMsg:${isUnknownMsg}`);
     console.log(colors.red(`NPM UNKNOWN STDERR: ${line}`));
   }
+  if (isAuthMsg) doAuth(); // previously this msg came on stdout, now it's on stderr, we watch for it on both.
 });
 
 
@@ -141,27 +156,20 @@ npmP.stdout.on('data', data => {
     assertIsStep(0);
     npmWrite(username);
   } else if (npmS.match(/one-time password|OTP|authenticator app/i)) {
-    assertIsStep(3);
-    const otp = totp.generate(otpSecret);
-    npmWrite(otp);
-    npmP.stdin.end(); // this is the last thing that we enter, so we end the stream
+    doAuth(); // previously this msg came on stdout, now it's on stderr, we watch for it on both.
   } else if (npmS.match(/password/i)) {
     assertIsStep(1);
     npmWrite(password);
   } else if (npmS.match(/email/i)) {
     assertIsStep(2);
     npmWrite(email);
-  } else if (npmS.match(/logged in as/i)) {
+  } else if (npmS.match(/logged in (as|on)/i)) {
     haveLoggedIn = 1;
-    if (!program.quiet) console.log(colors.green(npmS.trim()));
+    if (!program.quiet) console.log(colors.green(npmS.trim().replace('in on',`in as ${username} on`)));
   } else if (npmS.match(/.*err.*/i)) {
     console.log(`Unknown error`)
     npmP.stdin.end();
-  } else if (!program.verbose) {
-    if (npmS.match(/npm notice/i)) {
-      if (!program.quiet) console.log('NOTICE (NOT QUIET): ' + npmS);
-    } else {
-      if (!showingOutput) console.log(`Unknown NPM output: ${npmS}`);
-    }
+  } else if (!program.verbose && !program.quiet) { // if it is verbose then we already showed it above with VERBOSE PASSTHROUGH
+    console.log((npmS.match(/npm notice/i) ? 'NOTICE' : 'Unknown NPM output') + ' (NOT QUIET): ' + npmS);
   }
 });
