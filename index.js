@@ -14,7 +14,6 @@
 'use strict';
 
 const totp = require('otplib').authenticator;
-const colors = require('colors');
 const commander = require('commander');
 const { spawn } = require('child_process');
 const packageJson = require('./package.json');
@@ -35,20 +34,12 @@ const program = ( new commander.Command(packageJson.name)
   .option('-v --verbose', 'Show some debug info')
   .option('-E --error', 'Show stderr')
   .option('-q --quiet', 'Silence NPM notices')
+  .option('-c --no-color', 'No color in terminal')
   .parse(process.argv)
 );
 
-if (program.generateOtp) {
-  const otp = totp.generate(otpSecret);
-  console.log(colors.brightCyan(otp));
-  process.exit();
-}
-
-if (program.makeSecret) {
-  const secret = totp.generateSecret();
-  console.log(colors.brightCyan(secret));
-  process.exit();
-}
+const noColor = s => s;
+const colors = program.noColor ? { red:noColor, green:noColor, brightCyan:noColor } : require('colors');
 
 // do login
 
@@ -82,6 +73,18 @@ const username  = getString('username'         , 'username' ,     'USER');
 const password  = getString('password'         , 'password' ,     'PASS');
 const email     = getString('email'            , 'email'    ,     'EMAIL');
 const otpSecret = getString('TOTP Secret (2FA)', 'otpSecret', 'OTPSECRET');
+
+if (program.generateOtp) {
+  const otp = totp.generate(otpSecret);
+  console.log(colors.brightCyan(otp));
+  process.exit();
+}
+
+if (program.makeSecret) {
+  const secret = totp.generateSecret();
+  console.log(colors.brightCyan(secret));
+  process.exit();
+}
 
 npmArgsA.push(`--otp=${totp.generate(otpSecret)}`);
 
