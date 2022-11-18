@@ -1,11 +1,9 @@
 # npm-automated-login-totp
 
-A script to perform `npm login` (previously `npm adduser`) without having to interact with the shell.
+Login to NPM, fully automated, headless, scripted, non-interactive.
 
-This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
-
-### Security info for dummies
-If you don't know what 2FA is then read the security paragraph at the bottom.
+### What is 2FA?
+If you don't know, read "2FA for dummies" at the bottom of this page.
 
 ### Installation
 `npm install -g npm-automated-login-totp`
@@ -33,19 +31,28 @@ You should see: Logged in as bob on https://registry.npmjs.org/
 Star the repo
 https://github.com/softwarecreations/npm-automated-login-totp
 
-### Get notified of significant changes
+### Get notified of significant project changes
 Subscribe to this issue https://github.com/softwarecreations/npm-automated-login-totp/issues/1
 
 ## YubiKey support
-I will add it when I have time.
-
-Subscribe for updates https://github.com/softwarecreations/npm-automated-login-totp/issues/2
+Coming soon. Subscribe for YubiKey updates https://github.com/softwarecreations/npm-automated-login-totp/issues/2
 
 ### PR's
 Welcome
 
 ### Issues or Ideas
 Make an issue https://github.com/softwarecreations/npm-automated-login-totp/issues
+
+### License
+MIT
+
+### Dependencies
+Package name   | Purpose
+---            | ---
+colors         | Colors in terminal
+commander      | Get command-line arguments
+otplib         | Generate TOTPs and secrets
+~~totp-generator~~ | ~~Generate TOTP's for login~~
 
 ### `npm-automated-login-totp --help`
 
@@ -95,23 +102,12 @@ Useful action commands
 npm-automated-login-totp --registry https://example.com --username testUser --password testPass --otp-secret ABC123 --email test@example.com
 ```
 
-### License
-MIT
-
-### Dependencies
-Package name   | Purpose
----            | ---
-colors         | Colors in terminal
-commander      | Get command-line arguments
-otplib         | Generate TOTPs and secrets
-~~totp-generator~~ | ~~Generate TOTP's for login~~
-
 ### Changelog
 - 1.1.8 Refactor & improve NPM Error parser
 - 1.2.0 Switch from `totp-generator` to `otplib` so that I could add the `--make-secret` option. Tweaked stderr parser to respect `--quiet`.
 - 1.3.2 NPM added web browser login as the default, but now they accept OTP via commandline, so this project is better than ever now.
 
-### Security info for dummies - detailed
+### 2FA for dummies
 Real 2FA means that you authenticate from two separate devices that are running different operating systems. For example Windows/Linux/Mac as your first factor (password) and Android/IOS as your 2nd factor. Your second factor could be TOTP, or email. But if you have a backup of your TOTP secret, or access to your email, or your email account's password on your computer then you're not practising 2FA. If your computer has access to your 2nd factor it's like adding a security gate over your front door, and then leaving the gate key under the mat.
 
 If you want to be more secure than 99% of NPM users, then go ahead and do proper 2FA.
@@ -127,6 +123,11 @@ By using this project you agree that
 I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 96% of it. I basically just kept the command-line switches but DRY'd up the code around them.
 
 #### Keywords so that people can find this project
+
+This script performs `npm login` (previously `npm adduser`) without you needing to interact with the shell.
+
+This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
+
 * LXC
 * CRI-O
 * rkt
