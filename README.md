@@ -3,8 +3,8 @@
 Login to NPM, semi or fully automated, headless, scripted, non-interactive with a YubiCo YubiKey for 2FA (two factor authentication)
 
 I have two versions of this project
-> * Original version: https://github.com/softwarecreations/npm-automated-login-totp < You are here
-> * Paranoid version: https://github.com/softwarecreations/npm-login-yubikey
+> * Original version: https://www.npmjs.com/package/npm-automated-login-totp < You are here
+> * Paranoid version: https://www.npmjs.com/package/npm-login-yubikey
 
 ## Newbie questions
 
