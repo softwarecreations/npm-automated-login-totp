@@ -96,7 +96,7 @@ Make an issue https://github.com/softwarecreations/npm-automated-login-totp/issu
 ### License
 MIT
 
-### Dependencies
+### 3 Dependencies
 Package name   | Purpose
 ---            | ---
 colors         | Colors in terminal
