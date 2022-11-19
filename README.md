@@ -153,9 +153,9 @@ npm-automated-login-totp --registry https://example.com --username testUser --pa
 ### 2FA for dummies
 Real 2FA means that you authenticate from two separate devices that are running different operating systems. For example Windows/Linux/Mac as your first factor (password) and Android/IOS as your 2nd factor. Your second factor could be TOTP, or email. But if you have a backup of your TOTP secret, or access to your email, or your email account's password on your computer then you're not practising 2FA. If your computer has access to your 2nd factor it's like adding a security gate over your front door, and then leaving the gate key under the mat.
 
-If you want to be more secure than 99% of NPM users, then go ahead and do proper 2FA.
+If you want to be as secire as possible (probably more secure than 99% of NPM users), then do proper 2FA.
 
-This project won't support proper 2FA until YubiKey support is added.
+If you want to use this project and practice proper 2FA, then use it with a YubiKey, where you create the secret on your YubiKey from a separate clean computer.
 
 By using this project you agree that
 * You're a big boy or a big girl
@@ -171,6 +171,17 @@ This script performs `npm login` (previously `npm adduser`) without you needing 
 
 This allows fully automated (non-interactive) NPM user login that you can run inside a shell script or docker file or upon boot (or whatever) on headless containers, VM's or systems.
 
+* YubiKey 5 Series
+* YubiKey 5 NFC
+* YubiKey 4 Series
+* YubiKey 4C
+* YubiKey 4 Nano
+* YubiKey 5 Nano
+* YubiKey 5 Nano FIPS
+* YubiKey 5 FIPS Series
+* YubiKey 5C FIPS
+* YubiKey 5Ci FIPS
+* YubiCo
 * LXC
 * CRI-O
 * rkt
