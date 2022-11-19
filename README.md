@@ -150,7 +150,7 @@ npm-automated-login-totp --registry https://example.com --username testUser --pa
 - 1.2.0 Switch from `totp-generator` to `otplib` so that I could add the `--make-secret` option. Tweaked stderr parser to respect `--quiet`.
 - 1.3.2 NPM added web browser login as the default, but now they accept OTP via commandline, so this project is better than ever now.
 
-### 2FA for dummies
+### 2FA basic explanation
 Real 2FA means that you authenticate from two separate devices that are running different operating systems. For example Windows/Linux/Mac as your first factor (password) and Android/IOS as your 2nd factor. Your second factor could be TOTP, or email. But if you have a backup of your TOTP secret, or access to your email, or your email account's password on your computer then you're not practising 2FA. If your computer has access to your 2nd factor it's like adding a security gate over your front door, and then leaving the gate key under the mat.
 
 If you want to be as secire as possible (probably more secure than 99% of NPM users), then do proper 2FA.
