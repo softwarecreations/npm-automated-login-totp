@@ -63,7 +63,7 @@ Don't require touching your YubiKey (fully automated)
 8. Setup your environment variables
 
 You can use your above config, and simply override the OTP-Secret like this
-Or simply test with `npm-automated-login-totp --otp-secret yubikey`
+`npm-automated-login-totp --otp-secret yubikey`
 
 Or update your config to something like this
 ```
