@@ -44,7 +44,7 @@ You should see: Logged in as bob on https://registry.npmjs.org/
 
 ## Installation - YubiKey example (optional)
 Notes
-* Tested with YubiKey 5 nano
+* Tested with YubiKey 5 Nano
 * We call the TOTP key 'npm' but you can call it whatever you like.
 
 6. Install yubikey-manager
@@ -52,8 +52,13 @@ On Debian you'd just run `apt install yubikey-manager`
 
 7. Add your 'npm' secret to your YubiKey
 (most secure if you do this from a separate clean and secure device)
-`ykman oath accounts add --touch npm FOOBAR`
 Where FOOBAR is your OTP-Secret provided by npmjs.com
+
+Require touching your YubiKey (semi-auto)
+`ykman oath accounts add --touch npm FOOBAR`
+
+Don't require touching your YubiKey (fully automated)
+`ykman oath accounts add npm FOOBAR`
 
 8. Setup your environment variables
 
