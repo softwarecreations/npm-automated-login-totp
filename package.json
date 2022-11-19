@@ -1,6 +1,6 @@
 {
   "name": "npm-automated-login-totp",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "A script to login to NPM non-interactively.",
   "bin": {
     "npm-automated-login-totp": "./index.js"
@@ -23,9 +23,13 @@
     "adduser",
     "cli",
     "automation",
+    "automated",
     "2fa",
     "authentication",
-    "noninteractive"
+    "noninteractive",
+    "headless",
+    "console",
+    "terminal"
   ],
   "author": "@softwarecreations",
   "license": "MIT",
