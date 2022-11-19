@@ -4,16 +4,16 @@ Login to NPM, fully automated, headless, scripted, non-interactive.
 
 ## Newbie questions
 
-### What is 2FA?
-If you don't know, read "2FA for dummies" at the bottom of this page.
+### Newbies - What is 2FA?
+If you don't know, read "2FA basic explanation" at the bottom of this page.
 
-### Noobs - What is TOTP?
+### Newbies - What is TOTP?
 Time based One-Time-Password. If you've used Google Authenticator, Authy, AndOTP, etc then you've used it.
 
 It starts by creating a secret, then your OTP app generally makes a new OTP, based on a the current time in a 15 second interval.
 
-### Noobs - How npm-automated-login-totp works
-NPM requires 2FA for login, so npm-automated-login-totp generates OTP's so that it can login to NPM.
+### Newbies - How npm-automated-login-totp works
+NPM requires 2FA for login, so npm-automated-login-totp generates TOTP's (or gets them from your YubiKey) so that it can login to NPM.
 
 ## Installation - 2 minute setup
 `npm install -g npm-automated-login-totp`
@@ -42,15 +42,41 @@ export NPM_OTPSECRET='ABC123'
 5. Run `npm-automated-login-totp`
 You should see: Logged in as bob on https://registry.npmjs.org/
 
+## Installation - YubiKey example (optional)
+Notes
+* Tested with YubiKey 5 nano
+* We call the TOTP key 'npm' but you can call it whatever you like.
+
+6. Install yubikey-manager
+On Debian you'd just run `apt install yubikey-manager`
+
+7. Add your 'npm' secret to your YubiKey
+(most secure if you do this from a separate clean and secure device)
+`ykman oath accounts add --touch npm FOOBAR`
+Where FOOBAR is your OTP-Secret provided by npmjs.com
+
+8. Setup your environment variables
+
+You can use your above config, and simply override the OTP-Secret like this
+Or simply test with `npm-automated-login-totp --otp-secret yubikey`
+
+Or update your config to something like this
+```
+export NPM_USER='bob'
+export NPM_PASS='Secret-SeCreT-SECRET'
+export NPM_EMAIL='bob@email.com'
+export NPM_OTPSECRET='yubikey'
+export NPM_OTPNAME='npm'
+```
+
+Have fun!
+
 ### Say thanks
 Star the repo
 https://github.com/softwarecreations/npm-automated-login-totp
 
 ### Get notified of significant project changes
 Subscribe to this issue https://github.com/softwarecreations/npm-automated-login-totp/issues/1
-
-## YubiKey support
-Coming soon. Subscribe for YubiKey updates https://github.com/softwarecreations/npm-automated-login-totp/issues/2
 
 ### PR's
 Welcome
@@ -80,6 +106,7 @@ You can either provide the required credentials inline, or via environment varia
 - `NPM_USER`: NPM username
 - `NPM_PASS`: NPM password
 - `NPM_OTPSECRET`: TOTP secret used to generate OTP's for 2FA login
+- `NPM_OTPNAME`: TOTP name for NPM on your YubiKey (default is 'npm')
 - `NPM_EMAIL`: NPM email
 
 These command line arguments are also supported:
@@ -91,6 +118,7 @@ These command line arguments are also supported:
 - `-u --username`: NPM Username
 - `-p --password`: NPM Password
 - `-o --otp-secret`: TOTP secret used to generate OTP's for 2FA login
+- `-o --otp-name`: TOTP name for NPM on your YubiKey (default is 'npm')
 - `-e --email`: NPM Email
 
 Note that the command line arguments override the environment variables.

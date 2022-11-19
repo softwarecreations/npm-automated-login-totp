@@ -1,6 +1,6 @@
 {
   "name": "npm-automated-login-totp",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A script to login to NPM non-interactively.",
   "bin": {
     "npm-automated-login-totp": "./index.js"
