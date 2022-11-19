@@ -1,6 +1,6 @@
 {
   "name": "npm-automated-login-totp",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "A script to login to NPM non-interactively.",
   "bin": {
     "npm-automated-login-totp": "./index.js"
@@ -18,6 +18,8 @@
   "keywords": [
     "npm",
     "login",
+    "yubikey",
+    "security",
     "adduser",
     "cli",
     "automation",
