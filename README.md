@@ -55,7 +55,8 @@ Notes
 > * Debian/Ubuntu/PopOS `apt install yubikey-manager`
 > * Fedora/Redhat `yum install yubikey-manager`
 > * In Python: `pip install --user yubikey-manager`
-> * Windows/Mac, figure it out
+> * Windows `choco install yubikey-manager`
+> * Mac `brew install ykman`
 
 7. Add your 'npm' secret to your YubiKey
 (most secure if you do this from a separate clean and secure device)
