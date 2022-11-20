@@ -51,32 +51,33 @@ Notes
 * Tested with YubiKey 5 Nano
 * We call the TOTP key 'npm' but you can call it whatever you like.
 
-6. Install yubikey-manager
-On Debian you'd just run `apt install yubikey-manager`
+6. Install yubikey-manager aka `ykman`
+> * Debian/Ubuntu/PopOS `apt install yubikey-manager`
+> * Fedora/Redhat `yum install yubikey-manager`
+> * In Python: `pip install --user yubikey-manager`
+> * Windows/Mac, figure it out
 
 7. Add your 'npm' secret to your YubiKey
 (most secure if you do this from a separate clean and secure device)
 Where FOOBAR is your OTP-Secret provided by npmjs.com
 
-Require touching your YubiKey (semi-auto)
-`ykman oath accounts add --touch npm FOOBAR`
-
-Don't require touching your YubiKey (fully automated)
-`ykman oath accounts add npm FOOBAR`
+ > Semi automatic:  `ykman oath accounts add --touch npm FOOBAR`
+ >
+ > Fully automatic: `ykman oath accounts add npm FOOBAR`
 
 8. Setup your environment variables
 
-You can use your above config, and simply override the OTP-Secret like this
-`npm-automated-login-totp --otp-secret yubikey`
-
-Or update your config to something like this
-```
-export NPM_USER='bob'
-export NPM_PASS='Secret-SeCreT-SECRET'
-export NPM_EMAIL='bob@email.com'
-export NPM_OTPSECRET='yubikey'
-export NPM_OTPNAME='npm'
-```
+ > You can use your above config, and simply override the OTP-Secret like this
+ > `npm-automated-login-totp --otp-secret yubikey`
+ >
+ > Or update your config to something like this
+ > ```
+ > export NPM_USER='bob'
+ > export NPM_PASS='Secret-SeCreT-SECRET'
+ > export NPM_EMAIL='bob@email.com'
+ > export NPM_OTPSECRET='yubikey'
+ > export NPM_OTPNAME='npm'
+ > ```
 
 Have fun!
 
@@ -160,9 +161,9 @@ npm-automated-login-totp --registry https://example.com --username testUser --pa
 - 1.3.2 NPM added web browser login as the default, but now they accept OTP via commandline, so this project is better than ever now.
 
 ### 2FA basic explanation
-Real 2FA means that you authenticate from two separate devices that are running different operating systems. For example Windows/Linux/Mac as your first factor (password) and Android/IOS as your 2nd factor. Your second factor could be TOTP, or email. But if you have a backup of your TOTP secret, or access to your email, or your email account's password on your computer then you're not practising 2FA. If your computer has access to your 2nd factor it's like adding a security gate over your front door, and then leaving the gate key under the mat.
+Real 2FA means that you authenticate from two separate devices that are running different operating systems. For example Windows/Linux/Mac as your first factor (password) and YubiKey/Android/IOS as your 2nd factor. Your second factor could be TOTP, or email. But if you have a backup of your TOTP secret, or access to your 2nd factor on your computer then you're not practising proper 2FA. It's like adding a security gate over your front door, and then leaving the gate key under the mat.
 
-If you want to be as secire as possible (probably more secure than 99% of NPM users), then do proper 2FA.
+If you want to be as secure as possible (probably more secure than 99% of NPM users), then do proper 2FA.
 
 If you want to use this project and practice proper 2FA, then use it with a YubiKey, where you create the secret on your YubiKey from a separate clean computer.
 
@@ -172,7 +173,7 @@ By using this project you agree that
 * You take full responsibility for securing your devices where you store your authentication details
 
 ### Credits
-I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 96% of it. I basically just kept the command-line switches but DRY'd up the code around them.
+I found [ksafavi/npm-cli-adduser](https://github.com/ksafavi/npm-cli-adduser) which as of 2022-06-20 is unmaintained, 4 years old and not working. I forked and changed around 96% of it. I basically just kept a few of the command-line switches but DRY'd up the code around them.
 
 #### Keywords so that people can find this project
 
