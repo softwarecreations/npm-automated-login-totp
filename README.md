@@ -1,3 +1,9 @@
+[![NPM downloads](http://img.shields.io/npm/dt/npm-automated-login-totp.svg)](https://npmjs.org/package/npm-automated-login-totp)
+[![Version](https://img.shields.io/npm/v/npm-automated-login-totp.svg)](https://www.npmjs.com/package/npm-automated-login-totp)
+[![Dependencies](https://img.shields.io/librariesio/release/npm/npm-automated-login-totp)](https://libraries.io/npm/npm-automated-login-totp)
+[![License](https://img.shields.io/npm/l/npm-automated-login-totp)](https://npmjs.org/package/npm-automated-login-totp)
+![Code size](https://img.shields.io/github/languages/code-size/softwarecreations/npm-automated-login-totp.svg)
+
 # npm-automated-login-totp
 
 Login to NPM, semi or fully automated, headless, scripted, non-interactive with a YubiCo YubiKey for 2FA (two factor authentication)
